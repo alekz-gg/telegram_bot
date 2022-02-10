@@ -1,13 +1,22 @@
+from cgitb import text
+from posixpath import split
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-import time
+from datetime import date
+from datetime import time
+from datetime import datetime
+from datetime import timedelta
+
+import time, json, string
 
 
 TOKEN="5264948128:AAEDHAcbIvCXcOENgFTJZaLEOin53wyZWQw"
 
 bot = Bot(TOKEN)
 dp = Dispatcher(bot)
+
+fucking_dict = {}
 
 """========================CLIENT========================"""
 
@@ -21,25 +30,36 @@ async def command_start(message: types.Message):
 
 @dp.message_handler(commands=['mojet_bahnem'])
 async def command_start(message: types.Message):
+    friday = message.date + timedelta( (4-message.date.weekday()) % 7 )
+    party = datetime(friday.year, friday.month, friday.day, hour=19, minute=00, second=00)
+    time_to_party = party - message.date
     await message.reply("Обязательно бахнем")
-    time.sleep(2)
+    time.sleep(1)
     await bot.send_message(message.from_user.id, "И не раз")
-    time.sleep(2)
+    time.sleep(1)
     await bot.send_message(message.from_user.id, "Весь мир в труху")
-    # await bot.send_message(message.from_user.id, "но через ", time_to_next_party())
+    time.sleep(1)
+    await bot.send_message(message.from_user.id, f'но через {time_to_party}')
 
 """========================ADMIN========================"""
 
 async def next_party():
     pass
 
-async def time_to_next_party():
-    pass
+# @dp.message_handler()
+# async def time_to_next_party(message):
+#     friday = message.date + timedelta( (4-today.weekday()) % 7 )
+#     party = datetime(friday.year, friday.month, friday.day, hour=19, minute=00, second=00)
+#     time_to_party = party - message.date
+#     return time_to_party
 
-async def get_friday(ctime):
-    pass
+# def get_friday(ctime):
+#     friday = today + timedelta( (4-today.weekday()) % 7 )
+#     pass
 
 """========================GENERAL========================"""
+
+
 
 HELP = """
 /start - показать справку
@@ -47,137 +67,25 @@ HELP = """
 """
 
 @dp.message_handler()
-async def help(message: types.Message):
-    if message.text.lower() == "Привет".lower():
-        # await message.answer("Ну здарова")
-        # await message.reply(message.text)
-        await bot.send_message(message.from_user.id, HELP)
+async def fucking_checking(message: types.Message):
+    for word in message.text.split():
+        if {i.lower().translate(str.maketrans('', '', string.punctuation)) for i in message.text.split()}\
+            .intersection(set(json.load(open('cenz.json')))) != set():
+            await message.reply('Ах ты матершинник')
+            if message.from_user.id in list(fucking_dict.keys()):
+                fucking_dict[message.from_user.username] = str(int(fucking_dict[message.from_user.username]) + 1)
+            else:
+                fucking_dict[message.from_user.username] = 1
+            text = 'Главный матершинник чата ' + str(fucking_rating())
+            await bot.send_message(message.chat.id, text)
+
+def fucking_rating():
+    top = sorted(list(fucking_dict.values()))[0]
+    def get_key(fucking_dict, top):
+        for user_id, value in fucking_dict.items():
+            if value == top:
+                return user_id    
+    fucking_top = get_key(fucking_dict, top)
+    return fucking_top
 
 executor.start_polling(dp, skip_updates=True)
-
-
-
-
-
-
-
-# start = """
-# /start - показать справку
-# /shoksha - выбрать шокшу
-# /poksha - выбрать покшу
-# /who_is_shoksha - узнать кто шокша
-# /who_is_poksha - узнать кто покша"""
-
-# # /poksha
-# # /who_is_poksha - узнать кто покша в этом чате сегодня
-# # /rating - кто есть кто
-
-# Shoksha = ''
-# Poksha = ''
-
-# def get_rate(message, task):
-#     pass
-
-# @bot.message_handler(commands=["start"])
-# def help(message):
-#     bot.send_message(message.chat.id, start)
-
-# # про шокшу
-# @bot.message_handler(commands=["shoksha"])
-# def shoksha(message):
-#     global Shoksha
-#     Shoksha = message.from_user.username
-#     text = ' теперь ты, @' + Shoksha + ', шокша'
-#     bot.send_message(message.chat.id, text)
-
-# @bot.message_handler(commands=["who_is_shoksha"])
-# def who_is_shoksha(message):
-#     if Shoksha:
-#         text = '@' + Shoksha + ' шокша'
-#         bot.send_message(message.chat.id, text)
-#     else:
-#         text = "Шокша еще не определён"
-#         bot.send_message(message.chat.id, text)
-
-# # про покшу
-# @bot.message_handler(commands=["poksha"])
-# def poksha(message):
-#     global Poksha
-#     Poksha = message.from_user.username
-#     text = ' теперь @' + Poksha + ' покша'
-#     bot.send_message(message.chat.id, text)
-
-# @bot.message_handler(commands=["who_is_poksha"])
-# def who_is_poksha(message):
-#     if Poksha:
-#         text = '@' + Poksha + ' покша'
-#         bot.send_message(message.chat.id, text)
-#     else:
-#         text = "Покша еще не определён"
-#         bot.send_message(start = """
-# /start - показать справку
-# /shoksha - выбрать шокшу
-# /poksha - выбрать покшу
-# /who_is_shoksha - узнать кто шокша
-# /who_is_poksha - узнать кто покша"""
-
-# # /poksha
-# # /who_is_poksha - узнать кто покша в этом чате сегодня
-# # /rating - кто есть кто
-
-# Shoksha = ''
-# Poksha = ''
-
-# def get_rate(message, task):
-#     pass
-
-# @bot.message_handler(commands=["start"])
-# def help(message):
-#     bot.send_message(message.chat.id, start)
-
-# # про шокшу
-# @bot.message_handler(commands=["shoksha"])
-# def shoksha(message):
-#     global Shoksha
-#     Shoksha = message.from_user.username
-#     text = ' теперь ты, @' + Shoksha + ', шокша'
-#     bot.send_message(message.chat.id, text)
-
-# @bot.message_handler(commands=["who_is_shoksha"])
-# def who_is_shoksha(message):
-#     if Shoksha:
-#         text = '@' + Shoksha + ' шокша'
-#         bot.send_message(message.chat.id, text)
-#     else:
-#         text = "Шокша еще не определён"
-#         bot.send_message(message.chat.id, text)
-
-# # про покшу
-# @bot.message_handler(commands=["poksha"])
-# def poksha(message):
-#     global Poksha
-#     Poksha = message.from_user.username
-#     text = ' теперь @' + Poksha + ' покша'
-#     bot.send_message(message.chat.id, text)
-
-# @bot.message_handler(commands=["who_is_poksha"])
-# def who_is_poksha(message):
-#     if Poksha:
-#         text = '@' + Poksha + ' покша'
-#         bot.send_message(message.chat.id, text)
-#     else:
-#         text = "Покша еще не определён"
-#         bot.send_message(message.chat.id, text)
-
-
-# @bot.message_handler(commands=["show"])
-# def show(message):
-#     pass
-
-# # Постоянно обращается к серверу телеграмма
-# bot.polling(none_stop=True)
-
-# def choose(commands=[]):
-#     pass
-
-# # test_git_commit
