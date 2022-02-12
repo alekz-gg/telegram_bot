@@ -1,12 +1,7 @@
-from aiogram import types
+from aiogram import Dispatcher, types
 from create_bot import dp, bot
 import json, string
 
-
-HELP = """
-/start - показать справку
-/mojet_bahnem
-"""
 
 fucking_dict = {}
 
