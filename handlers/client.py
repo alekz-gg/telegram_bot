@@ -1,8 +1,8 @@
-from wsgiref.handlers import format_date_time
 from aiogram import Dispatcher, types
 from datetime import datetime, timedelta
 from create_bot import dp, bot
 import time
+from keyboards import kb_client
 
 HELP = """
 Вот что я могу
@@ -10,10 +10,10 @@ HELP = """
 /mojet_bahnem
 """
 
-@dp.message_handler(commands=['start', 'help'])
+@dp.message_handler(commands=['start'])
 async def command_start(message: types.Message):
     try:
-        await bot.send_message(message.from_user.id, "Здравствуй, мой юный друг")
+        await bot.send_message(message.from_user.id, "Здравствуй, мой юный друг", reply_markup=kb_client)
         time.sleep(1)
         await bot.send_message(message.from_user.id, HELP)
     except:
@@ -33,8 +33,9 @@ async def command_mojet_bahnem(message: types.Message):
     if time_to_party.days == 0:
         await bot.send_message(message.from_user.id, f'но через {time_to_party}')
     else:
-        await bot.send_message(message.from_user.id, f'но через {time_to_party.days + 1} дней')
+        await bot.send_message(message.from_user.id, f'но через {time_to_party.days} дней')
+
 def register_handlers_client(dp: Dispatcher):
-    dp.register_message_handler(command_start, commands=['start', 'help'])
+    dp.register_message_handler(command_start, commands=['start'])
     dp.register_message_handler(command_mojet_bahnem, commands=['mojet_bahnem'])
     # dp.register_message_handler()
