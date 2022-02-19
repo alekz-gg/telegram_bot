@@ -32,6 +32,10 @@ async def command_mojet_bahnem(message: types.Message):
     time.sleep(1)
     if time_to_party.days == 0:
         await bot.send_message(message.from_user.id, f'но через {time_to_party}')
+    elif time_to_party.days == 1:
+        await bot.send_message(message.from_user.id, f'но завтра')
+    elif time_to_party.days in (2,3,4):
+        await bot.send_message(message.from_user.id, f'но через {time_to_party.days} дня')
     else:
         await bot.send_message(message.from_user.id, f'но через {time_to_party.days} дней')
 
